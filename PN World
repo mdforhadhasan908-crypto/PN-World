@@ -1,0 +1,965 @@
+
+import 'package:flutter/material.dart';
+
+void main() => runApp(const PNWorldApp());
+
+class PNWorldApp extends StatelessWidget {
+  const PNWorldApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'PN World',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: const HomePage(),
+    );
+  }
+}
+
+// -------------------- CATEGORY --------------------
+
+class Category {
+  final String name;
+  final IconData icon;
+  final Color color;
+  const Category(this.name, this.icon, this.color);
+}
+
+const categories = <Category>[
+  Category('সাধারণ জ্ঞান', Icons.lightbulb, Colors.blue),
+  Category('BCS প্রস্তুতি', Icons.account_balance, Colors.deepPurple),
+  Category('বাংলাদেশ বিষয়াবলি', Icons.flag, Colors.red),
+  Category('আন্তর্জাতিক বিষয়াবলি', Icons.public, Colors.teal),
+  Category('চাকরির প্রস্তুতি', Icons.work, Colors.orange),
+  Category('ব্যাংক প্রস্তুতি', Icons.account_balance_wallet, Colors.indigo),
+  Category('ভর্তি পরীক্ষা', Icons.school, Colors.pink),
+  Category('সাম্প্রতিক তথ্য', Icons.newspaper, Colors.green),
+  Category('বাংলা', Icons.menu_book, Colors.deepOrange),
+  Category('English', Icons.language, Colors.cyan),
+  Category('গণিত', Icons.calculate, Colors.brown),
+  Category('উচ্চতর গণিত', Icons.functions, Colors.deepPurple),
+  Category('ICT', Icons.computer, Colors.blueGrey),
+  Category('পদার্থবিজ্ঞান', Icons.science, Colors.lightBlue),
+  Category('রসায়ন', Icons.biotech, Colors.green),
+  Category('জীববিজ্ঞান', Icons.eco, Colors.lightGreen),
+  Category('ইতিহাস', Icons.history_edu, Colors.redAccent),
+  Category('ভূগোল', Icons.public, Colors.teal),
+  Category('পৌরনীতি', Icons.gavel, Colors.indigo),
+  Category('অর্থনীতি', Icons.trending_up, Colors.orange),
+  Category('হিসাববিজ্ঞান', Icons.calculate_outlined, Colors.purple),
+  Category('ব্যবসায় শিক্ষা', Icons.business, Colors.blue),
+  Category('কৃষিশিক্ষা', Icons.grass, Colors.green),
+  Category('ধর্ম ও নৈতিক শিক্ষা', Icons.menu_book, Colors.deepOrange),
+  Category('প্রাথমিক শিক্ষা', Icons.child_care, Colors.pink),
+  Category('মাধ্যমিক শিক্ষা', Icons.school, Colors.cyan),
+  Category('উচ্চমাধ্যমিক শিক্ষা', Icons.cast_for_education, Colors.indigo),
+  Category('বিশ্ববিদ্যালয়', Icons.account_balance, Colors.deepPurple),
+  Category('ভাষা শিক্ষা', Icons.translate, Colors.teal),
+  Category('কম্পিউটার শিক্ষা', Icons.desktop_windows, Colors.blueGrey),
+  Category('বিজ্ঞান ও প্রযুক্তি', Icons.science_outlined, Colors.orange),
+  Category('ইসলামিক জ্ঞান', Icons.mosque, Colors.green),
+];
+
+final bcsExams = List.generate(50, (i) => '${50 - i}তম BCS Preli');
+
+const defaultSubjects = [
+  'বাংলা', 'English', 'গণিত', 'সাধারণ জ্ঞান', 'বিজ্ঞান', 'ICT'
+];
+
+List<String> subjectsFor(String category) {
+  if (category == 'BCS প্রস্তুতি') {
+    return [
+      'বাংলা ভাষা ও সাহিত্য',
+      'English Language and Literature',
+      'বাংলাদেশ বিষয়াবলি',
+      'আন্তর্জাতিক বিষয়াবলি',
+      'ভূগোল ও পরিবেশ',
+      'সাধারণ বিজ্ঞান',
+      'কম্পিউটার ও ICT',
+      'গাণিতিক যুক্তি',
+      'মানসিক দক্ষতা',
+      'নৈতিকতা ও সুশাসন',
+    ];
+  }
+  if (category == 'বাংলা') {
+    return ['বাংলা ব্যাকরণ', 'বাংলা সাহিত্য', 'কবিতা', 'গদ্য', 'ভাষা ও রচনা'];
+  }
+  if (category == 'English' || category == 'ভাষা শিক্ষা') {
+    return ['Grammar', 'Vocabulary', 'Reading', 'Writing', 'Literature'];
+  }
+  if (category == 'গণিত' || category == 'উচ্চতর গণিত') {
+    return ['পাটিগণিত', 'বীজগণিত', 'জ্যামিতি', 'ত্রিকোণমিতি', 'পরিসংখ্যান'];
+  }
+  if (category == 'পদার্থবিজ্ঞান') {
+    return ['ভৌত রাশি', 'গতি', 'বল', 'কাজ ও শক্তি', 'তাপ', 'আলো', 'বিদ্যুৎ'];
+  }
+  if (category == 'রসায়ন') {
+    return ['পরমাণুর গঠন', 'মৌলের পর্যায়বৃত্ততা', 'রাসায়নিক বন্ধন', 'অম্ল ও ক্ষার'];
+  }
+  if (category == 'জীববিজ্ঞান') {
+    return ['কোষ ও টিস্যু', 'উদ্ভিদবিজ্ঞান', 'প্রাণিবিজ্ঞান', 'মানবদেহ', 'জীবপ্রযুক্তি'];
+  }
+  if (category == 'ICT' || category == 'কম্পিউটার শিক্ষা') {
+    return ['কম্পিউটার পরিচিতি', 'সংখ্যা পদ্ধতি', 'প্রোগ্রামিং', 'ডেটাবেজ', 'নেটওয়ার্ক'];
+  }
+  if (category == 'বাংলাদেশ বিষয়াবলি') {
+    return ['বাংলাদেশের ইতিহাস', 'মুক্তিযুদ্ধ', 'সংবিধান', 'অর্থনীতি', 'সংস্কৃতি'];
+  }
+  if (category == 'আন্তর্জাতিক বিষয়াবলি') {
+    return ['বিশ্ব ইতিহাস', 'আন্তর্জাতিক সংস্থা', 'বিশ্ব রাজনীতি', 'দেশ ও রাজধানী'];
+  }
+  if (category == 'ইতিহাস') {
+    return ['প্রাচীন ইতিহাস', 'মধ্যযুগের ইতিহাস', 'আধুনিক ইতিহাস', 'বাংলার ইতিহাস'];
+  }
+  if (category == 'ভূগোল') {
+    return ['প্রাকৃতিক ভূগোল', 'মানব ভূগোল', 'বাংলাদেশের ভূগোল', 'পরিবেশ'];
+  }
+  if (category == 'অর্থনীতি') {
+    return ['মৌলিক অর্থনীতি', 'চাহিদা ও যোগান', 'জাতীয় আয়', 'বাংলাদেশের অর্থনীতি'];
+  }
+  if (category == 'ইসলামিক জ্ঞান' || category == 'ধর্ম ও নৈতিক শিক্ষা') {
+    return ['ধর্মীয় জ্ঞান', 'নৈতিক শিক্ষা', 'ইতিহাস', 'সাধারণ শিক্ষা'];
+  }
+  return defaultSubjects;
+}
+
+const chapterNames = [
+  'প্রাথমিক ধারণা', 'মৌলিক বিষয়সমূহ', 'গুরুত্বপূর্ণ তথ্য',
+  'প্রয়োগ ও বিশ্লেষণ', 'অনুশীলন',
+];
+
+const topicNames = [
+  'সংজ্ঞা ও পরিচিতি', 'প্রকারভেদ ও বৈশিষ্ট্য',
+  'গুরুত্বপূর্ণ প্রশ্ন', 'অনুশীলনী',
+];
+
+// -------------------- QUESTION DATABASE --------------------
+
+class Question {
+  String text;
+  List<String> options;
+  int answer;
+  String explanation;
+
+  Question(this.text, this.options, this.answer, this.explanation);
+}
+
+class QuestionBank extends ChangeNotifier {
+  final List<Question> questions = [
+    Question('বাংলাদেশের রাজধানীর নাম কী?',
+        ['চট্টগ্রাম', 'ঢাকা', 'রাজশাহী', 'খুলনা'], 1,
+        'ঢাকা বাংলাদেশের রাজধানী।'),
+    Question('বাংলাদেশের জাতীয় ফুল কোনটি?',
+        ['গোলাপ', 'শাপলা', 'জবা', 'বেলি'], 1,
+        'শাপলা বাংলাদেশের জাতীয় ফুল।'),
+    Question('আন্তর্জাতিক মাতৃভাষা দিবস কবে?',
+        ['১৬ ডিসেম্বর', '২৬ মার্চ', '২১ ফেব্রুয়ারি', '১ মে'], 2,
+        '২১ ফেব্রুয়ারি আন্তর্জাতিক মাতৃভাষা দিবস।'),
+    Question('বাংলাদেশের জাতীয় পাখি কোনটি?',
+        ['কাক', 'দোয়েল', 'ময়না', 'টিয়া'], 1,
+        'দোয়েল বাংলাদেশের জাতীয় পাখি।'),
+    Question('বাংলাদেশের স্বাধীনতা দিবস কবে?',
+        ['২৬ মার্চ', '১৬ ডিসেম্বর', '২১ ফেব্রুয়ারি', '১ জানুয়ারি'], 0,
+        '২৬ মার্চ বাংলাদেশের স্বাধীনতা দিবস।'),
+  ];
+
+  void add(Question q) {
+    questions.add(q);
+    notifyListeners();
+  }
+
+  void edit(int index, Question q) {
+    questions[index] = q;
+    notifyListeners();
+  }
+
+  void remove(int index) {
+    questions.removeAt(index);
+    notifyListeners();
+  }
+}
+
+final questionBankNotifier = QuestionBank();
+
+// -------------------- HOME PAGE --------------------
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String search = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final filtered = categories.where(
+      (c) => c.name.toLowerCase().contains(search.toLowerCase()),
+    ).toList();
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF4F3FA),
+      appBar: AppBar(
+        title: const Text('PN World'),
+        centerTitle: true,
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            tooltip: 'অ্যাডমিন',
+            icon: const Icon(Icons.admin_panel_settings),
+            onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const AdminLoginPage())),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(18, 22, 18, 24),
+            decoration: const BoxDecoration(
+              color: Colors.deepPurple,
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(28)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('স্বাগতম PN World-এ',
+                  style: TextStyle(color: Colors.white, fontSize: 23,
+                    fontWeight: FontWeight.bold)),
+                const SizedBox(height: 7),
+                const Text('জ্ঞান অর্জন হোক আরও সহজ',
+                  style: TextStyle(color: Colors.white70, fontSize: 15)),
+                const SizedBox(height: 18),
+                TextField(
+                  onChanged: (v) => setState(() => search = v),
+                  decoration: InputDecoration(
+                    hintText: 'ক্যাটাগরি খুঁজুন...',
+                    prefixIcon: const Icon(Icons.search),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Row(
+              children: [
+                const Text('সকল ক্যাটাগরি',
+                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold)),
+                const Spacer(),
+                Text('${filtered.length} টি'),
+              ],
+            ),
+          ),
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.all(12),
+              itemCount: filtered.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 1.5,
+              ),
+              itemBuilder: (context, index) {
+                final c = filtered[index];
+                return Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18)),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(18),
+                    onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => CategoryPage(category: c.name))),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(c.icon, size: 34, color: c.color),
+                        const SizedBox(height: 9),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Text(c.name, textAlign: TextAlign.center,
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// -------------------- CATEGORY / SUBJECT / CHAPTER --------------------
+
+class CategoryPage extends StatelessWidget {
+  final String category;
+  const CategoryPage({super.key, required this.category});
+
+  @override
+  Widget build(BuildContext context) {
+    final items = category == 'BCS প্রস্তুতি'
+        ? bcsExams
+        : ['প্রাথমিক স্তর', 'মাধ্যমিক স্তর', 'উচ্চমাধ্যমিক স্তর', 'বিশেষ প্রস্তুতি'];
+
+    return Scaffold(
+      appBar: AppBar(title: Text(category),
+        backgroundColor: Colors.deepPurple, foregroundColor: Colors.white),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: items.length,
+        itemBuilder: (context, index) => Card(
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.deepPurple.shade50,
+              child: const Icon(Icons.menu_book, color: Colors.deepPurple)),
+            title: Text(items[index]),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () => Navigator.push(context, MaterialPageRoute(
+              builder: (_) => SubjectPage(category: category, selection: items[index]))),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SubjectPage extends StatelessWidget {
+  final String category;
+  final String selection;
+  const SubjectPage({super.key, required this.category, required this.selection});
+
+  @override
+  Widget build(BuildContext context) {
+    final subjects = subjectsFor(category);
+    return Scaffold(
+      appBar: AppBar(title: Text(selection),
+        backgroundColor: Colors.deepPurple, foregroundColor: Colors.white),
+      body: ListView(
+        padding: const EdgeInsets.all(12),
+        children: [
+          const Padding(padding: EdgeInsets.all(8),
+            child: Text('বিষয় নির্বাচন করুন',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+          ...subjects.map((s) => Card(
+            child: ListTile(
+              leading: const Icon(Icons.library_books, color: Colors.deepPurple),
+              title: Text(s),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => ChapterPage(subject: s))),
+            ),
+          )),
+        ],
+      ),
+    );
+  }
+}
+
+class ChapterPage extends StatelessWidget {
+  final String subject;
+  const ChapterPage({super.key, required this.subject});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(subject),
+        backgroundColor: Colors.deepPurple, foregroundColor: Colors.white),
+      body: ListView(
+        padding: const EdgeInsets.all(12),
+        children: [
+          const Padding(padding: EdgeInsets.all(8),
+            child: Text('অধ্যায় নির্বাচন করুন',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+          ...chapterNames.asMap().entries.map((e) => Card(
+            child: ListTile(
+              leading: CircleAvatar(child: Text('${e.key + 1}')),
+              title: Text('${e.value} — $subject'),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => TopicPage(chapter: e.value))),
+            ),
+          )),
+        ],
+      ),
+    );
+  }
+}
+
+class TopicPage extends StatelessWidget {
+  final String chapter;
+  const TopicPage({super.key, required this.chapter});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(chapter),
+        backgroundColor: Colors.deepPurple, foregroundColor: Colors.white),
+      body: ListView(
+        padding: const EdgeInsets.all(12),
+        children: [
+          const Padding(padding: EdgeInsets.all(8),
+            child: Text('টপিক নির্বাচন করুন',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+          ...topicNames.map((t) => Card(
+            child: ListTile(
+              leading: const Icon(Icons.topic, color: Colors.deepPurple),
+              title: Text(t),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => ContentPage(topic: t))),
+            ),
+          )),
+        ],
+      ),
+    );
+  }
+}
+
+// -------------------- CONTENT PAGE --------------------
+
+class ContentPage extends StatelessWidget {
+  final String topic;
+  const ContentPage({super.key, required this.topic});
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(topic),
+          backgroundColor: Colors.deepPurple,
+          foregroundColor: Colors.white,
+          bottom: const TabBar(
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
+            tabs: [Tab(text: 'MCQ প্রশ্ন'), Tab(text: 'সৃজনশীল প্রশ্ন')],
+          ),
+        ),
+        body: const TabBarView(children: [MCQPage(), CreativePage()]),
+      ),
+    );
+  }
+}
+
+// -------------------- MCQ PAGE --------------------
+
+class MCQPage extends StatefulWidget {
+  const MCQPage({super.key});
+
+  @override
+  State<MCQPage> createState() => _MCQPageState();
+}
+
+class _MCQPageState extends State<MCQPage> {
+  final Map<int, int> selectedAnswers = {};
+  final Set<int> explanationsShown = {};
+  final labels = ['ক', 'খ', 'গ', 'ঘ'];
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: questionBankNotifier,
+      builder: (context, child) {
+        final questions = questionBankNotifier.questions;
+        return ListView.builder(
+          padding: const EdgeInsets.all(12),
+          itemCount: questions.length,
+          itemBuilder: (context, index) {
+            final q = questions[index];
+            final selected = selectedAnswers[index];
+
+            return Card(
+              margin: const EdgeInsets.only(bottom: 16),
+              elevation: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('প্রশ্ন ${index + 1}: ${q.text}',
+                      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 12),
+                    ...List.generate(4, (i) {
+                      final isCorrect = i == q.answer;
+                      final isWrong = selected == i && !isCorrect;
+                      final bg = selected == null
+                          ? Colors.white
+                          : isCorrect
+                              ? const Color(0xFFB9F6CA)
+                              : isWrong
+                                  ? const Color(0xFFFFCDD2)
+                                  : Colors.white;
+                      final border = selected == null
+                          ? Colors.grey.shade400
+                          : isCorrect
+                              ? Colors.green
+                              : isWrong
+                                  ? Colors.red
+                                  : Colors.grey.shade300;
+
+                      return Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.only(bottom: 9),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (selected == null) {
+                              setState(() => selectedAnswers[index] = i);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: bg,
+                            foregroundColor: Colors.black87,
+                            elevation: 0,
+                            alignment: Alignment.centerLeft,
+                            padding: const EdgeInsets.all(16),
+                            side: BorderSide(color: border, width: 1.5),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(child: Text('${labels[i]}. ${q.options[i]}',
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600))),
+                              if (selected != null && isCorrect)
+                                const Icon(Icons.check_circle, color: Colors.green),
+                              if (selected != null && isWrong)
+                                const Icon(Icons.cancel, color: Colors.red),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                    OutlinedButton.icon(
+                      onPressed: () => setState(() {
+                        if (explanationsShown.contains(index)) {
+                          explanationsShown.remove(index);
+                        } else {
+                          explanationsShown.add(index);
+                        }
+                      }),
+                      icon: const Icon(Icons.lightbulb_outline),
+                      label: Text(explanationsShown.contains(index)
+                          ? 'ব্যাখ্যা বন্ধ করুন' : 'ব্যাখ্যা দেখুন'),
+                    ),
+                    if (explanationsShown.contains(index))
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text('ব্যাখ্যা: ${q.explanation}',
+                          style: const TextStyle(fontSize: 15)),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+// -------------------- CREATIVE PAGE --------------------
+
+class CreativePage extends StatefulWidget {
+  const CreativePage({super.key});
+
+  @override
+  State<CreativePage> createState() => _CreativePageState();
+}
+
+class _CreativePageState extends State<CreativePage> {
+  final Set<String> shown = {};
+
+  final List<String> parts = ['ক', 'খ', 'গ', 'ঘ'];
+
+  @override
+  Widget build(BuildContext context) {
+    const prompt = 'একটি শিক্ষার্থী নিয়মিত পড়াশোনা করে এবং জ্ঞান অর্জন করে।';
+    return ListView(
+      padding: const EdgeInsets.all(12),
+      children: [
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('সৃজনশীল প্রশ্ন ১',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                const SizedBox(height: 10),
+                const Text('উদ্দীপক: $prompt'),
+                const SizedBox(height: 12),
+                ...parts.map((part) {
+                  final key = '1-$part';
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('$part. ${part == 'ক' ? 'জ্ঞান কী?' : part == 'খ' ? 'শিক্ষার গুরুত্ব কী?' : part == 'গ' ? 'উদ্দীপকের শিক্ষার্থীর কাজ ব্যাখ্যা কর।' : 'নিয়মিত পড়াশোনার উপকারিতা বিশ্লেষণ কর।'}'),
+                      TextButton(
+                        onPressed: () => setState(() {
+                          if (shown.contains(key)) {
+                            shown.remove(key);
+                          } else {
+                            shown.add(key);
+                          }
+                        }),
+                        child: Text(shown.contains(key) ? 'উত্তর লুকান' : 'উত্তর দেখুন'),
+                      ),
+                      if (shown.contains(key))
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 12),
+                          child: Text('উত্তর: এটি একটি নমুনা উত্তর। বিষয়ভিত্তিক সঠিক উত্তর অ্যাডমিন থেকে যুক্ত করতে হবে।'),
+                        ),
+                    ],
+                  );
+                }),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// -------------------- ADMIN LOGIN --------------------
+
+class AdminLoginPage extends StatefulWidget {
+  const AdminLoginPage({super.key});
+
+  @override
+  State<AdminLoginPage> createState() => _AdminLoginPageState();
+}
+
+class _AdminLoginPageState extends State<AdminLoginPage> {
+  final passwordController = TextEditingController();
+  bool hidePassword = true;
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('অ্যাডমিন লগইন'),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.admin_panel_settings,
+              size: 75, color: Colors.deepPurple),
+            const SizedBox(height: 20),
+            const Text('PN World Admin',
+              style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            TextField(
+              controller: passwordController,
+              obscureText: hidePassword,
+              decoration: InputDecoration(
+                labelText: 'অ্যাডমিন পাসওয়ার্ড',
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: Icon(hidePassword ? Icons.visibility : Icons.visibility_off),
+                  onPressed: () => setState(() => hidePassword = !hidePassword),
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  // এটি শুধু পরীক্ষামূলক পাসওয়ার্ড।
+                  if (passwordController.text == 'PNdemo2026') {
+                    Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (_) => const AdminPage()));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('পাসওয়ার্ড সঠিক নয়')),
+                    );
+                  }
+                },
+                child: const Text('লগইন করুন'),
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text('ডেমো পাসওয়ার্ড: PNdemo2026',
+              style: TextStyle(color: Colors.grey)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// -------------------- ADMIN PAGE --------------------
+
+class AdminPage extends StatefulWidget {
+  const AdminPage({super.key});
+
+  @override
+  State<AdminPage> createState() => _AdminPageState();
+}
+
+class _AdminPageState extends State<AdminPage> {
+  final questionController = TextEditingController();
+  final optionA = TextEditingController();
+  final optionB = TextEditingController();
+  final optionC = TextEditingController();
+  final optionD = TextEditingController();
+  final explanationController = TextEditingController();
+
+  int correctAnswer = 0;
+  int? editingIndex;
+
+  List<TextEditingController> get optionControllers =>
+      [optionA, optionB, optionC, optionD];
+
+  @override
+  void dispose() {
+    questionController.dispose();
+    optionA.dispose();
+    optionB.dispose();
+    optionC.dispose();
+    optionD.dispose();
+    explanationController.dispose();
+    super.dispose();
+  }
+
+  void clearForm() {
+    questionController.clear();
+    optionA.clear();
+    optionB.clear();
+    optionC.clear();
+    optionD.clear();
+    explanationController.clear();
+    setState(() {
+      correctAnswer = 0;
+      editingIndex = null;
+    });
+  }
+
+  void loadQuestion(int index) {
+    final q = questionBankNotifier.questions[index];
+    questionController.text = q.text;
+    optionA.text = q.options[0];
+    optionB.text = q.options[1];
+    optionC.text = q.options[2];
+    optionD.text = q.options[3];
+    explanationController.text = q.explanation;
+
+    setState(() {
+      correctAnswer = q.answer;
+      editingIndex = index;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('প্রশ্নটি এডিট করার জন্য লোড হয়েছে')),
+    );
+  }
+
+  void saveQuestion() {
+    final text = questionController.text.trim();
+    final options = optionControllers.map((c) => c.text.trim()).toList();
+    final explanation = explanationController.text.trim();
+
+    if (text.isEmpty || options.any((v) => v.isEmpty) || explanation.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('সব ঘর পূরণ করুন')),
+      );
+      return;
+    }
+
+    final q = Question(text, options, correctAnswer, explanation);
+
+    if (editingIndex == null) {
+      questionBankNotifier.add(q);
+    } else {
+      questionBankNotifier.edit(editingIndex!, q);
+    }
+
+    clearForm();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(editingIndex == null
+          ? 'প্রশ্ন যোগ হয়েছে'
+          : 'প্রশ্ন আপডেট হয়েছে')),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('PN World অ্যাডমিন'),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            tooltip: 'লগআউট',
+            icon: const Icon(Icons.logout),
+            onPressed: () => Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const HomePage()),
+              (route) => false,
+            ),
+          ),
+        ],
+      ),
+      body: AnimatedBuilder(
+        animation: questionBankNotifier,
+        builder: (context, child) {
+          final questions = questionBankNotifier.questions;
+
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              const Text('অ্যাডমিন ড্যাশবোর্ড',
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              const Text('এখান থেকে MCQ প্রশ্ন যোগ, এডিট ও মুছে ফেলতে পারবেন।'),
+              const SizedBox(height: 25),
+
+              Text(editingIndex == null ? 'নতুন MCQ যোগ করুন' : 'MCQ প্রশ্ন এডিট করুন',
+                style: const TextStyle(fontSize: 21, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 14),
+
+              TextField(
+                controller: questionController,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  labelText: 'প্রশ্ন লিখুন',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              ...List.generate(4, (i) => Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: TextField(
+                  controller: optionControllers[i],
+                  decoration: InputDecoration(
+                    labelText: 'অপশন ${['ক', 'খ', 'গ', 'ঘ'][i]}',
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+              )),
+
+              const Text('সঠিক উত্তর নির্বাচন করুন',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+              ...List.generate(4, (i) => RadioListTile<int>(
+                title: Text('অপশন ${['ক', 'খ', 'গ', 'ঘ'][i]}'),
+                value: i,
+                groupValue: correctAnswer,
+                onChanged: (v) => setState(() => correctAnswer = v!),
+              )),
+
+              TextField(
+                controller: explanationController,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  labelText: 'ব্যাখ্যা লিখুন',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 15),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: saveQuestion,
+                  icon: Icon(editingIndex == null ? Icons.add : Icons.save),
+                  label: Text(editingIndex == null ? 'প্রশ্ন যোগ করুন' : 'পরিবর্তন সংরক্ষণ করুন'),
+                ),
+              ),
+
+              if (editingIndex != null)
+                TextButton.icon(
+                  onPressed: clearForm,
+                  icon: const Icon(Icons.close),
+                  label: const Text('এডিট বাতিল করুন'),
+                ),
+
+              const Divider(height: 35),
+              Text('প্রশ্ন তালিকা (${questions.length}টি)',
+                style: const TextStyle(fontSize: 21, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+
+              ...List.generate(questions.length, (index) {
+                final q = questions[index];
+                return Card(
+                  child: ListTile(
+                    isThreeLine: true,
+                    title: Text('${index + 1}. ${q.text}'),
+                    subtitle: Text('সঠিক উত্তর: ${q.options[q.answer]}'),
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (value) {
+                        if (value == 'edit') {
+                          loadQuestion(index);
+                        } else if (value == 'delete') {
+                          showDialog(
+                            context: context,
+                            builder: (dialogContext) => AlertDialog(
+                              title: const Text('প্রশ্ন মুছবেন?'),
+                              content: const Text('এই প্রশ্নটি মুছে ফেলতে চান?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(dialogContext),
+                                  child: const Text('না'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    questionBankNotifier.remove(index);
+                                    if (editingIndex == index) clearForm();
+                                    Navigator.pop(dialogContext);
+                                  },
+                                  child: const Text('হ্যাঁ, মুছুন'),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                      },
+                      itemBuilder: (_) => const [
+                        PopupMenuItem(value: 'edit', child: Text('এডিট করুন')),
+                        PopupMenuItem(value: 'delete', child: Text('ডিলিট করুন')),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
